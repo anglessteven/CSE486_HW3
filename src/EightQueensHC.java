@@ -47,6 +47,7 @@ public class EightQueensHC {
 	
 	private static int numAttacked(Square[][] board, int rPos, int cPos) {
 		int numAttacked = 0;
+		int[] considered = new int[board.length];
 		for (int i=1; i<board.length; i++) {
 			if (isValidPosition(rPos-i, cPos))
 				numAttacked += hasQueen(board, rPos-i, cPos);
@@ -98,28 +99,30 @@ public class EightQueensHC {
 	
 	private static Square[][] ascend(Square[][] board) {
 		int cost = calcCost(board);
-		Square[][] bestBoard = board;
+		Square[][] bestBoard = Arrays.copyOf(board, board.length);
 		for (int i=0; (i<board.length); i++) {
 			int origPos = queensIdx[i];
 			for (int j=0; (j<board[i].length); j++) {
 				if (j != origPos) {
+					board = Arrays.copyOf(bestBoard, bestBoard.length);
 					// remove queen from previous spot
 					board[i][queensIdx[i]] = Square.EMPTY;
 					// place queen in new spot
 					board[i][j] = Square.QUEEN;
 					// update queen location
 					queensIdx[i] = j;
-					printBoard(board);
 					int thisBoardCost = calcCost(board);
+					System.out.println(cost);
 					if (thisBoardCost < cost) {
 						bestBoard = Arrays.copyOf(board, board.length);
+						printBoard(bestBoard);
 						cost = thisBoardCost;
 					}
 				}
 			}
-			board[i][queensIdx[i]] = Square.EMPTY; 
-			board[i][origPos] = Square.QUEEN;
-			queensIdx[i] = origPos;
+			//board[i][queensIdx[i]] = Square.EMPTY; 
+			//board[i][origPos] = Square.QUEEN;
+			//queensIdx[i] = origPos;
 		}
 		return bestBoard;
 	}
