@@ -35,35 +35,40 @@ public class EightQueensHC {
 	
 	private static int calcCost(Square[][] board) {
 		int boardCost = 0;
+		int[] considered = new int[board.length];
+		for (int i=0; i<considered.length;i++) {
+			considered[i] = -(Integer.MAX_VALUE);
+		}
 		for (int i=0; i<board.length; i++) {
 			for (int j=0; j<board[i].length; j++) {
 				if (board[i][j] == Square.QUEEN) {
-					boardCost += numAttacked(board,i,j);
+					boardCost += numAttacked(board,i,j,considered);
+					considered[i] = j;
 				}
 			}
 		}
 		return boardCost;
 	}
 	
-	private static int numAttacked(Square[][] board, int rPos, int cPos) {
+	private static int numAttacked(Square[][] board, int rPos, int cPos,
+			int[] considered) {
 		int numAttacked = 0;
-		int[] considered = new int[board.length];
 		for (int i=1; i<board.length; i++) {
-			if (isValidPosition(rPos-i, cPos))
+			if (isValidPosition(rPos-i, cPos) && considered[rPos-i] != cPos)
 				numAttacked += hasQueen(board, rPos-i, cPos);
-			if (isValidPosition(rPos+i, cPos))
+			if (isValidPosition(rPos+i, cPos) && considered[rPos+i] != cPos)
 				numAttacked += hasQueen(board, rPos+i, cPos);
-			if (isValidPosition(rPos-i, cPos-i))
+			if (isValidPosition(rPos-i, cPos-i) && considered[rPos-i] != cPos-i)
 				numAttacked += hasQueen(board, rPos-i, cPos-i);
-			if (isValidPosition(rPos+i, cPos+i))
+			if (isValidPosition(rPos+i, cPos+i) && considered[rPos+i] != cPos+i)
 				numAttacked += hasQueen(board, rPos+i, cPos+i);
-			if (isValidPosition(rPos, cPos+i))
+			if (isValidPosition(rPos, cPos+i) && considered[rPos] != cPos+i)
 				numAttacked += hasQueen(board, rPos, cPos+i);
-			if (isValidPosition(rPos-i, cPos-i))
+			if (isValidPosition(rPos, cPos-i) && considered[rPos] != cPos-i)
 				numAttacked += hasQueen(board, rPos, cPos-i);
-			if (isValidPosition(rPos-i, cPos+i))
+			if (isValidPosition(rPos-i, cPos+i) && considered[rPos-i] != cPos+i)
 				numAttacked += hasQueen(board, rPos-i, cPos+i);
-			if (isValidPosition(rPos+i, cPos-i))
+			if (isValidPosition(rPos+i, cPos-i) && considered[rPos+i] != cPos-i)
 				numAttacked += hasQueen(board, rPos+i, cPos-i);
 		}
 		return numAttacked;
@@ -87,10 +92,17 @@ public class EightQueensHC {
 	}
 	
 	private static boolean isSolution(Square[][] board) {
+		int[] considered = new int[board.length];
+		for (int i=0; i<considered.length;i++) {
+			considered[i] = -(Integer.MAX_VALUE);
+		}
 		for (int i=0; i<board.length; i++) {
-			for (int j=0; j<board.length; j++) {
+			for (int j=0; j<board[i].length; j++) {
 				if (board[i][j] == Square.QUEEN) {
-					if (numAttacked(board,i,j) > 0) return false;
+					int tmp = numAttacked(board,i,j,considered);
+					// System.out.println(tmp);
+					if (tmp > 0) return false;
+					considered[i] = j;
 				}
 			}
 		}
@@ -112,11 +124,11 @@ public class EightQueensHC {
 					// update queen location
 					queensIdx[i] = j;
 					int thisBoardCost = calcCost(board);
-					System.out.println(cost);
 					if (thisBoardCost < cost) {
 						bestBoard = Arrays.copyOf(board, board.length);
 						printBoard(bestBoard);
 						cost = thisBoardCost;
+						System.out.println(cost);
 					}
 				}
 			}
@@ -147,8 +159,18 @@ public class EightQueensHC {
 				{Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY},
 				{Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.QUEEN, Square.EMPTY},
 				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY}
-				};
-		if (isSolution(testboard)) printBoard(testboard);*/
+				};*/
+		/*Square[][] testboard = {{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.EMPTY, Square.EMPTY, Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY},
+				{Square.QUEEN, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY, Square.EMPTY}
+				};*/
+		// printBoard(testboard);
+		// if (isSolution(testboard)) printBoard(testboard);
 		boolean foundSoln = false;
 		for (int i=0; (i<NUM_RESTARTS) && !foundSoln; i++) {
 			board = genRandomBoard();
@@ -176,8 +198,8 @@ public class EightQueensHC {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// for (int i=0; i<50000; i++) {
+		for (int i=0; i<500; i++) {
 			climb();
-		// }
+		}
 	}
 }
