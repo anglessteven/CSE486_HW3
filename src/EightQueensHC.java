@@ -12,11 +12,14 @@
 public class EightQueensHC {
 	/**
 	 * Basic data structure to handle square representation for 8 queens
+	 * Idea for this representation from Dr. Zmuda's n-queens recursive solution
 	 */
 	private enum Square {
 		EMPTY,
 		QUEEN
 	};
+	
+	private static int solnFound = 0;
 	
 	/**
 	 * A constant for the number of restarts to do in the algorithm
@@ -26,7 +29,7 @@ public class EightQueensHC {
 	/**
 	 * The size of the board (and subsequently the number of queens) to simulate
 	 */
-	private static final int BOARD_SIZE = 8;
+	private static final int BOARD_SIZE = 30;
 	
 	/**
 	 * The two dimensional Square array representing the board
@@ -93,7 +96,7 @@ public class EightQueensHC {
 	}
 	
 	/**
-	 * Very messy convenience method for determining the number of queens
+	 * A very messy convenience method for determining the number of queens
 	 * the queen at the given coordinates attacks.
 	 * 
 	 * @param board the board configuration to check
@@ -280,6 +283,7 @@ public class EightQueensHC {
 		
 		if (foundSoln) {
 			System.out.println("Solution found:");
+			solnFound++;
 			printBoard(board);
 		} else {
 			System.out.println("No solution found this time. Maybe next time!");
@@ -290,8 +294,12 @@ public class EightQueensHC {
 	 * Main method, starts the climb
 	 */
 	public static void main(String[] args) {
-		// for (int i=0; i<10; i++) {
+		long start = System.currentTimeMillis();
+		for (int i=0; i<1000; i++) {
 			climb();
-		// }
+		}
+		long end = System.currentTimeMillis();
+		System.out.println(solnFound + " solutions found out of 1000 runs.");
+		System.out.println("Average time to run: " + ((end-start)/1000) + "ms.");
 	}
 }
